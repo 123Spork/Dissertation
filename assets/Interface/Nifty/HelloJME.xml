@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<nifty>
+    <useStyles filename="nifty-default-styles.xml"/>
+    <useControls filename="nifty-default-controls.xml" />
+  <screen id="start" controller="mygame.Screens.startScreen">
+        <layer id="background" backgroundColor="#000" visibleToMouse="true" childLayout="center"> </layer>
+        <layer id="foreground" childLayout="center">
+            <panel id="panel" height="100%" width="100%" align="left" valign="top" backgroundImage="Interface/Backgrounds/start.png" childLayout="absolute" visibleToMouse="true">
+                <effect>
+                    <onStartScreen name="move" mode="in" direction="top" length="400" startDelay="0" inherit="true" />
+                    <onEndScreen name="move" mode="out" direction="top" length="300" startDelay="0" inherit="true" />
+                </effect>
+                <control name="label" id="UsernameLabel" text="Username : " height="20px" width="10%" x="5%" y="80%" textHAlign="left" />
+                <control name="textfield"  id="Username" text="" width="30%" height="20px" x="17%" y="80%" />              
+                <control name="label"  id="PasswordLabel" text="Password : " height="20px" width="10%" x="55%" y="80%" textHAlign="left" />
+                <control name="textfield"  id="Password" text="" width="30%" height="20px" x="66%" y="80%" passwordChar="*" />
+             
+                <control name="button" id="CreateButton" label="Create" width="10%" height="20px" x="5%" y="85%">
+                    <interact onClick="createuser()"/>
+                </control>
+                <control name="button" id="LoginButton" label="Login" width="10%" height="20px" x="86%" y="85%">
+                    <interact onClick="login()"/>
+                </control>
+                 <control name="button" id="RefreshButton" label="Refresh" width="10%" height="20px" x="86%" y="95%">
+                    <interact onClick="setClient()"/>
+                </control>
+                <control name="label" id="Message" text="" height="20px" width="20%" x="64%" y="85%" textHAlign="right" />
+                <control name="label" id="ServerMessage" text="Server Offline" height="20px" width="20%" x="64%" y="95%" textHAlign="right" />  
+            </panel>
+        </layer>
+    </screen>
+      
+  <screen id="lobby" controller="mygame.Screens.lobbyScreen">
+        
+        <layer id="foreground" childLayout="center">
+            <panel id="panel" height="100%" width="100%" align="left" valign="top" backgroundColor="#f00" childLayout="absolute" visibleToMouse="true">
+                <effect>
+                    <onStartScreen name="move" mode="in" direction="top" length="400" startDelay="0" inherit="true" />
+                    <onEndScreen name="move" mode="out" direction="top" length="300" startDelay="0" inherit="true" />
+                </effect>
+                
+                <control name="label" id="Player1" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="5%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                  <control name="label" id="Player2" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="10%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                  <control name="label" id="Player3" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="15%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                  <control name="label" id="Player4" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="20%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                  <control name="label" id="Player5" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="25%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                  <control name="label" id="Player6" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="30%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                  <control name="label" id="Player7" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="35%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                  <control name="label" id="Player8" onClick="PlayerGet()" backgroundColor="#00f" text="No Player" width="20%" height="20px" x="75%" y="40%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                 <control name="label" id="Timer" onClick="PlayerGet()" backgroundColor="#00f" text="Waiting for Server" width="20%" height="20px" x="5%" y="5%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                           <control name="label" id="Level" onClick="PlayerGet()" backgroundColor="#00f" text="Western Level" width="20%" height="20px" x="5%" y="15%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                
+                           <control name="label" id="Theme" onClick="PlayerGet()" backgroundColor="#00f" text="Western Theme" width="20%" height="20px" x="30%" y="15%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect> 
+                </control>
+                    
+                        
+                                
+            </panel>
+        </layer>
+  </screen>
+  
+  
+  <screen id="newuser" controller="mygame.Screens.newuserScreen">
+        <layer id="background" backgroundColor="#000" childLayout="center"> </layer>
+        <layer id="foreground" childLayout="center">
+            <panel id="panel" height="100%" width="100%" backgroundImage="Interface/Backgrounds/newuser.png" align="left" valign="top" backgroundColor="#0000" childLayout="absolute" visibleToMouse="true">
+                <effect>
+                    <onStartScreen name="move" mode="in" direction="top" length="400" startDelay="0" inherit="true" />
+                    <onEndScreen name="move" mode="out" direction="top" length="300" startDelay="0" inherit="true" />
+                </effect>
+              
+                <control name="label" id="UsernameLabel" text="Username" height="20px" width="10%" x="0" y="80%" textHAlign="right" />
+                <control name="textfield" id="Username" width="20%" height="20px" x="12%" y="80%" />
+                <control name="label" id="EmailLabel" text="Email" height="20px" width="10%" x="0" y="85%" textHAlign="right" /> 
+                <control name="textfield" id="Email" width="20%" height="20px" x="12%" y="85%" />
+                <control name="label" id="PasswordLabel" text="Password" height="20px" width="20%" x="30%" y="80%" textHAlign="right" />
+                <control name="textfield" id="Password" width="20%" height="20px" x="52%" y="80%" />
+                <control name="label" id="RepeatPasswordLabel" text="Repeat Password" height="20px" width="20%" x="30%" y="85%" textHAlign="right" />
+                <control name="textfield" id="RepeatPassword" width="20%" height="20px" x="52%" y="85%" />
+                
+                
+                
+                
+   
+               <control name="button" id="CreateButton" label="Create Account" width="20%" height="20px" x="75%" y="82%">
+                    <interact onClick="createuser()"/>
+                </control>
+                <control name="button" id="LoginButton" label="Back to Login" width="20%" height="20px" x="5%" y="95%">
+                    <interact onClick="backtologin()"/>
+                </control>
+               <control name="label" id="Message" text="" height="20px" width="20%" x="47%" y="70%" textHAlign="left" /> 
+            </panel>
+        </layer>
+    </screen>
+    <screen id="play" controller="mygame.Screens.playScreen">
+        <layer id="foreground" childLayout="center">
+            <panel id="panel" height="20%" width="80%" align="left" valign="bottom" backgroundColor="#00000060" childLayout="absolute" visibleToMouse="true">
+                <control name="textfield" id="ChatBox" length = "45" width="100%" height="20%" x="0%" y="0%" />
+                <control name="label" id="Chat1" text="" height="15%" width="100%" x="1%" y="20%" textHAlign="left" />
+                <control name="label" id="Chat2" text="" height="15%" width="98%" x="1%" y="35%" textHAlign="left" />
+                <control name="label" id="Chat3" text="" height="15%" width="780px" x="1%" y="50%" textHAlign="left" />
+                <control name="label" id="Chat4" text="" height="15%" width="780px" x="1%" y="65%" textHAlign="left" /> 
+                <control name="label" id="Chat5" text="" height="15%" width="780px" x="1%" y="80%" textHAlign="left" />  
+            </panel>
+            <panel id="panel2" height="100%" width="20%" align="right" valign="top" backgroundColor="#00000080" childLayout="absolute" visibleToMouse="true">
+                <control name="label" id="UserName" text="" height="20px" width="100%" x="0%" y="0%" textHAlign="center" />
+             
+                <control name="button" id="western" label="Western Theme" width="80%" height="20px" x="10%" y="80%">
+                    <interact onClick="setwestern()"/>
+                </control>   
+                <control name="button" id="scifi" label="SciFi Theme" width="80%" height="20px" x="10%" y="85%">
+                    <interact onClick="setscifi()"/>
+                </control>   
+                <control name="button" id="filmnoir" label="Film Noir Theme" width="80%" height="20px" x="10%" y="90%">
+                    <interact onClick="setfilmnoir()"/>
+                </control>   
+               
+                  <control name="label" id="healthback" height="4%" width="80%" x="10%" y="5%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect>
+                  </control>
+               
+              <control name="label" id="health" height="4%" width="80%" backgroundColor="#f00" x="10%" y="5%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect>                
+              </control>
+                               
+               <control name="label" id="staminaback" height="4%" width="80%" x="10%" y="10%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect>
+                  </control>
+               
+              <control name="label" id="stamina" height="4%" width="80%" backgroundColor="#00f" x="10%" y="10%">
+                <effect>
+                 <onActive name="border" border="1px,1px,1px,1px" color="#ffffff,#ffffff,#ffffff,#ffffff" timeType="infinite"/>
+                </effect>                
+              </control>
+               
+                
+             <image id="item1" width="32px" height="32px" x="5%" y="18%">
+             <interact onClick="i1click()" onSecondaryClick="i1unclick()"/></image>
+             <control name="label" id="item1_label" text="" height="20px" width="28px" x="5%" y="17%" textHAlign="left" />
+            <image id="item2" width="32px" height="32px" x="38%" y="18%">
+                             <interact onClick="i2click()" onSecondaryClick="i2unclick()"/></image>
+             <control name="label" id="item2_label" text="" height="20px" width="28px" x="38%" y="17%" textHAlign="left" />
+            <image id="item3"  width="32px" height="32px" x="71%" y="18%">
+                             <interact onClick="i3click()" onSecondaryClick="i3unclick()"/></image>
+            <control name="label" id="item3_label" text="" height="20px" width="28px" x="71%" y="17%" textHAlign="left" />
+             
+       
+       
+       <image id="item4" width="32px" height="32px" x="5%" y="28%">
+                              <interact onClick="i4click()" onSecondaryClick="i4unclick()"/></image>
+                   <control name="label" id="item4_label" text="" height="20px" width="28px" x="5%" y="27%" textHAlign="left" />
+            <image id="item5" width="32px" height="32px" x="38%" y="28%">
+                             <interact onClick="i5click()" onSecondaryClick="i5unclick()"/></image>
+                                  <control name="label" id="item5_label" text="" height="20px" width="28px" x="38%" y="27%" textHAlign="left" />
+            <image id="item6"  width="32px" height="32px" x="71%" y="28%">
+                             <interact onClick="i6click()" onSecondaryClick="i6unclick()"/></image>
+                                                <control name="label" id="item6_label" text="" height="20px" width="28px" x="71%" y="27%" textHAlign="left" />
+            
+                                                
+                                                
+            <image id="item7" width="32px" height="32px" x="5%" y="38%">
+                             <interact onClick="i7click()" onSecondaryClick="i7unclick()"/></image>
+                                    <control name="label" id="item7_label" text="" height="20px" width="28px" x="5%" y="37%" textHAlign="left" />
+            <image id="item8" width="32px" height="32px" x="38%" y="38%">
+                             <interact onClick="i8click()" onSecondaryClick="i8unclick()"/></image>
+                                             <control name="label" id="item8_label" text="" height="20px" width="28px" x="38%" y="37%" textHAlign="left" />
+            <image id="item9"  width="32px" height="32px" x="71%" y="38%">
+                             <interact onClick="i9click()" onSecondaryClick="i9unclick()"/></image>  
+                                      <control name="label" id="item9_label" text="" height="20px" width="28px" x="71%" y="37%" textHAlign="left" />
+            
+                                      
+                                      
+           <image id="item10" width="32px" height="32px" x="5%" y="48%">
+                             <interact onClick="i10click()" onSecondaryClick="i10unclick()"/></image>
+                                      <control name="label" id="item10_label" text="" height="20px" width="28px" x="5%" y="47%" textHAlign="left" />
+            <image id="item11" width="32px" height="32px" x="38%" y="48%">
+                             <interact onClick="i11click()" onSecondaryClick="i11unclick()"/></image>
+                                        <control name="label" id="item11_label" text="" height="20px" width="28px" x="38%" y="47%" textHAlign="left" />
+            <image id="item12"  width="32px" height="32px" x="71%" y="48%">
+                             <interact onClick="i12click()" onSecondaryClick="i12unclick()"/></image>
+            <control name="label" id="item12_label" text="" height="20px" width="28px" x="71%" y="47%" textHAlign="left" />
+           
+
+
+
+            <image id="item13" width="32px" height="32px" x="5%" y="58%">
+                              <interact onClick="i13click()" onSecondaryClick="i13unclick()"/></image>
+                                       <control name="label" id="item13_label" text="" height="20px" width="28px" x="5%" y="57%" textHAlign="left" />
+            <image id="item14" width="32px" height="32px" x="38%" y="58%">
+                             <interact onClick="i14click()" onSecondaryClick="i14unclick()"/></image>
+                                       <control name="label" id="item14_label" text="" height="20px" width="28px" x="38%" y="57%" textHAlign="left" />
+            <image id="item15"  width="32px" height="32px" x="71%" y="58%">
+                             <interact onClick="i15click()" onSecondaryClick="i15unclick()"/></image>
+                                         <control name="label" id="item15_label" text="" height="20px" width="28px" x="71%" y="57%" textHAlign="left" />
+            
+                                         
+            <image id="item16" width="32px" height="32px" x="5%" y="68%">
+                             <interact onClick="i16click()" onSecondaryClick="i16unclick()"/></image>
+                                          <control name="label" id="item16_label" text="" height="20px" width="28px" x="5%" y="67%" textHAlign="left" />
+            <image id="item17" width="32px" height="32px" x="38%" y="68%">
+                             <interact onClick="i17click()" onSecondaryClick="i17unclick()"/></image>
+                                               <control name="label" id="item17_label" text="" height="20px" width="28px" x="38%" y="67%" textHAlign="left" />
+            <image id="item18"  width="32px" height="32px" x="71%" y="68%">  
+                         <interact onClick="i18click()" onSecondaryClick="i18unclick()"/></image>
+                                                     <control name="label" id="item18_label" text="" height="20px" width="28px" x="71%" y="67%" textHAlign="left" /> 
+
+            </panel> 
+            <panel id="panel3" height="100px" width="100px" align="left" valign="top" backgroundColor="#00000000" childLayout="absolute" visibleToMouse="true">
+                <effect>
+                    <onStartScreen name="move" mode="in" direction="top" length="400" startDelay="0" inherit="true" />
+                    <onEndScreen name="move" mode="out" direction="top" length="300" startDelay="0" inherit="true" />
+                </effect>
+                  
+                <control name="button" id="showInv" label="Inventory" width="100px" height="20px" x="10px" y="10px">
+                    <interact onClick="ShowInventory()"/>
+                </control>   
+                <control name="button" id="showChat" label="Chat" width="100px" height="20px" x="10px" y="30px">
+                    <interact onClick="showChat()"/>
+                </control>  
+                
+                   
+                <control name = "button" id="logout" label="Logout" width="100px" height="20px" x="10%" y="50px">
+                    <interact onClick="logout()"/>
+                </control> 
+
+          
+
+            </panel> 
+            
+                        
+                            
+             <panel id="load" height="100%" width="100%" align="left" valign="top" backgroundColor="#f00" childLayout="absolute" visibleToMouse="false">
+                <control name="label" id="Load" text="Loading" height="20%" width="100%" x="0" y="40%" textHAlign="center" />       
+            </panel>    
+           
+            
+        </layer>
+    </screen>
+    
+    
+    
+</nifty>
