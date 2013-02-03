@@ -9,16 +9,18 @@ public class Map {
     
     public Queue<Sprite> sprites;
     public Queue<String> deletecache;
+    public Queue<WarpPoint> warppoints;
     public Queue<Item> staticitems;
     public Queue<Item> dynamicitems;
     public Node terrain;
     public Node skybox;
 
-    public Map(int _staticitems, int _dynamicitems, int _sprites)
+    public Map(int _staticitems, int _dynamicitems, int _sprites, int _warps)
     {
         staticitems=new Queue(Item.class,_staticitems);
         dynamicitems = new Queue(Item.class,40);
         sprites = new Queue(Sprite.class,_sprites);
+        warppoints = new Queue(WarpPoint.class,_warps);
         deletecache = new Queue(String.class,(_staticitems+_dynamicitems+_sprites));
     }
     

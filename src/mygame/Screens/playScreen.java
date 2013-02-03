@@ -3,6 +3,7 @@ package mygame.Screens;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -145,7 +146,7 @@ public class playScreen extends AbstractAppState implements ScreenController {
                             updatechat(playerName + " is not online.");
                         }
                     } else if (Blarg.startsWith("/respawn")) {
-                        app.player.sprite.setLocation(new Vector3f(0, 10, 0));
+                        app.player.sprite.setLocation(new Vector3f(0, 1, 0));
                         app.player.sprite.updateScene = true;
                     } else if (Blarg.startsWith("/help")) {
                         updatechat("/warptoplayer <playername>, /warptome <playername>, /respawn");
@@ -553,7 +554,26 @@ public class playScreen extends AbstractAppState implements ScreenController {
                 }
             }
         }
-               
+        
+        for(int i=0;i<map.warppoints.size;i++)
+        {
+            if(map.warppoints.buffer[i]!=null)
+            {
+            Vector3f magnitude= new Vector3f(0,0,0);
+            double distance;
+            
+            magnitude.x = app.player.sprite.getLocation().x>map.warppoints.buffer[i].sprite.Model.getLocalTranslation().x ? app.player.sprite.getLocation().x- map.warppoints.buffer[i].sprite.Model.getLocalTranslation().x : map.warppoints.buffer[i].sprite.Model.getLocalTranslation().x-app.player.sprite.getLocation().x;
+            magnitude.y = app.player.sprite.getLocation().y>map.warppoints.buffer[i].sprite.Model.getLocalTranslation().y ? app.player.sprite.getLocation().y- map.warppoints.buffer[i].sprite.Model.getLocalTranslation().y : map.warppoints.buffer[i].sprite.Model.getLocalTranslation().y-app.player.sprite.getLocation().y;
+            magnitude.y = app.player.sprite.getLocation().y>map.warppoints.buffer[i].sprite.Model.getLocalTranslation().z ? app.player.sprite.getLocation().z- map.warppoints.buffer[i].sprite.Model.getLocalTranslation().z : map.warppoints.buffer[i].sprite.Model.getLocalTranslation().z-app.player.sprite.getLocation().z;
+            distance = Math.sqrt((magnitude.z*magnitude.z)+(magnitude.y*magnitude.y)+(magnitude.z*magnitude.z));
+            if(distance<=0.5)
+                {
+                    app.player.sprite.setLocation(map.warppoints.buffer[i].getGoto());
+                    app.client.send(new UpdateMessageNID(app.player.sprite.getLocation(), app.player.sprite.getWalkDirection()));    
+                 }
+            }
+        }
+           
        }
     }
     

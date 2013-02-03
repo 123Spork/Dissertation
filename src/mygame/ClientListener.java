@@ -11,6 +11,7 @@ import mygame.Data.Item;
 import mygame.Data.Map;
 import mygame.Data.PlayerData;
 import mygame.Data.Sprite;
+import mygame.Data.WarpPoint;
 import mygame.Main.State;
 import mygame.Screens.playScreen;
 import mygame.messages.*;
@@ -35,7 +36,7 @@ import mygame.messages.*;
        this.client = _in;
        messages=new MessageClasses();
        messages.Serialize();
-       client.addMessageListener(this, EndServerMsg.class, ByteMessage.class, LevelSetupMessage.class, ToLobbyMessage.class, LobbyTimerMessage.class, AddSpriteMessage.class, RemoveSpriteMessage.class, LoggedInMessage.class, WarpToMeMessage.class, LoggedOutMessage.class, GetMapMessage.class, LoginMessage.class, MapSetupMessage.class, AddStaticItemMessage.class, RemoveStaticItemMessage.class, AddDynamicItemMessage.class, RemoveDynamicItemMessage.class, DropItemMessage.class, CreateUserMessage.class, ChatMessage.class, UpdateMessage.class, UpdateMessageNID.class);
+       client.addMessageListener(this, EndServerMsg.class, ByteMessage.class, LevelSetupMessage.class, AddWarpMessage.class, ToLobbyMessage.class, LobbyTimerMessage.class, AddSpriteMessage.class, RemoveSpriteMessage.class, LoggedInMessage.class, WarpToMeMessage.class, LoggedOutMessage.class, GetMapMessage.class, LoginMessage.class, MapSetupMessage.class, AddStaticItemMessage.class, RemoveStaticItemMessage.class, AddDynamicItemMessage.class, RemoveDynamicItemMessage.class, DropItemMessage.class, CreateUserMessage.class, ChatMessage.class, UpdateMessage.class, UpdateMessageNID.class);
    }     
   public void messageReceived(Client source, Message message) {
     if (message instanceof ByteMessage) {
@@ -59,7 +60,7 @@ import mygame.messages.*;
     else if (message instanceof MapSetupMessage)
     {
         app.lobbyscreen.countdown=true;
-        app.playscreen.map = new Map(((MapSetupMessage)message).getStaticItems(),((MapSetupMessage)message).getDynamicItems(),((MapSetupMessage)message).getSprites());    
+        app.playscreen.map = new Map(((MapSetupMessage)message).getStaticItems(),((MapSetupMessage)message).getDynamicItems(),((MapSetupMessage)message).getSprites(),((MapSetupMessage)message).getWarps());    
          app.enqueue(new Callable<Void>() {
                   public Void call() throws Exception {    
               app.playscreen.map.init(app.playscreen.assetManager, app.bulletAppState, rootNode, app.playscreen.level, app.playscreen.theme);            
@@ -134,6 +135,29 @@ import mygame.messages.*;
           }});
          }
      }
+    
+     else if(message instanceof AddWarpMessage)
+    {
+        if(app.playscreen!=null)
+        {
+          app.playscreen.map.warppoints.Enqueue(new WarpPoint(app.getAssetManager(),app.playscreen.theme,((AddWarpMessage)message).getType(),((AddWarpMessage)message).getPosition(),((AddWarpMessage)message).getGoto()));
+
+          app.enqueue(new Callable<Void>() {
+                  public Void call() throws Exception {   
+                   for(int i=0;i<app.playscreen.map.warppoints.size;i++)
+                   {
+                       if(app.playscreen.map.warppoints.buffer[i]!=null){
+                       if(!rootNode.hasChild(app.playscreen.map.warppoints.buffer[i].sprite.Model) && !app.playscreen.map.warppoints.buffer[i].sprite.getVisible())
+                       {
+                         app.playscreen.map.warppoints.buffer[i].sprite.addModel(rootNode);
+                         app.playscreen.map.warppoints.buffer[i].sprite.addPhysics(app.bulletAppState);
+                       }
+                       }
+                   }
+                  return null;
+          }});
+         }
+     }
      
      
     
@@ -192,7 +216,7 @@ import mygame.messages.*;
             {            
                 if(app.player==null)
                 {
-            app.player = new PlayerData(app.startscreen.getuser(),b,app.playscreen.assetManager,app.playscreen.theme,new Vector3f(0,10,0));
+            app.player = new PlayerData(app.startscreen.getuser(),b,app.playscreen.assetManager,app.playscreen.theme,new Vector3f(0,1,0));
             app.player.sprite.initControl(app.playscreen.inputManager);
             app.startscreen.printmessage("Logging In");
             nifty.gotoScreen("lobby");  
@@ -203,7 +227,7 @@ import mygame.messages.*;
             {
                 if(app.player!=null)
                 {
-                app.updatePlayer = new PlayerData(name,b, app.playscreen.assetManager,app.playscreen.theme,new Vector3f(0,40,0));
+                app.updatePlayer = new PlayerData(name,b, app.playscreen.assetManager,app.playscreen.theme,new Vector3f(0,1,0));
                 app.enqueue(new Callable<Void>() {
                  public Void call() throws Exception { 
                     app.players.Enqueue(app.updatePlayer);

@@ -55,7 +55,7 @@ public class PlayerSprite implements ActionListener, AnimEventListener  {
         Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");   
         mat.setTexture("ColorMap", assetManager.loadTexture(TextureDir+"0/player.png"));
         Model.setMaterial(mat);
-        Control.setMaxSlope(0.785398163f);
+        Control.setMaxSlope(0.2f);
         Model.addControl(Control);
         
         animationControl = Model.getControl(AnimControl.class);

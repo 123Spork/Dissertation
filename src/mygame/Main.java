@@ -126,7 +126,7 @@ public class Main extends SimpleApplication{
     Listener=null;
         try 
         {
-            client = Network.connectToServer("82.3.71.187",6143);
+            client = Network.connectToServer("127.0.01",6143);
             client.start();
             Listener = new ClientListener(this,rootNode,nifty,client); 
             startscreen.printservermessage("Server Online");
