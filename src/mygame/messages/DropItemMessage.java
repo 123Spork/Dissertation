@@ -10,7 +10,7 @@ public class DropItemMessage extends AbstractMessage {
   private int Type;
   private Vector3f position;
   public DropItemMessage() {}    // empty constructor
-  public DropItemMessage(int _type, Vector3f _pos){Type=_type; position=_pos;}
+  public DropItemMessage(int _type,Vector3f _pos){Type=_type; position=_pos;}
   
   public int getType()
   {

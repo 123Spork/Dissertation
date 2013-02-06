@@ -5,8 +5,10 @@ import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.font.Rectangle;
@@ -15,6 +17,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -41,7 +44,9 @@ public class PlayerSprite implements ActionListener, AnimEventListener  {
    public boolean updateScene=false;
    BitmapText label2;
    private int health,stamina,totalhealth,totalstamina;
-   
+       public GhostControl Ghost;
+    public Node GhostNode;
+    
    
     public PlayerSprite(AssetManager assetManager, float _scale, Vector3f _loc, int theme, String name)
     {
@@ -49,11 +54,11 @@ public class PlayerSprite implements ActionListener, AnimEventListener  {
         camDir=Vector3f.ZERO;
         camLeft=Vector3f.ZERO;
         Control=new CharacterControl(new CapsuleCollisionShape(0.4f,1.45f),1f);
-        Model=(Node)assetManager.loadModel(ModelDir + "0/player.mesh.j3o");
+        Model=(Node)assetManager.loadModel(ModelDir + theme+"/player.mesh.j3o");
         Model.scale(_scale);
         Model.setLocalTranslation(_loc);
         Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");   
-        mat.setTexture("ColorMap", assetManager.loadTexture(TextureDir+"0/player.png"));
+        mat.setTexture("ColorMap", assetManager.loadTexture(TextureDir+theme+"/player.png"));
         Model.setMaterial(mat);
         Control.setMaxSlope(0.2f);
         Model.addControl(Control);
@@ -105,6 +110,19 @@ public class PlayerSprite implements ActionListener, AnimEventListener  {
             health=0;
         }
     }
+    
+    public void addGhostControl(BulletAppState bullet)
+    {
+        Ghost = new GhostControl(
+        new BoxCollisionShape(new Vector3f(1.5f,1.5f,1.5f)));  // a box-shaped ghost
+        GhostNode = new Node("ghostcontrol");
+        GhostNode.addControl(Ghost);                         // the ghost follows this node
+        Model.attachChild(GhostNode);
+        bullet.getPhysicsSpace().add(Ghost);
+    }
+    
+    
+    
     public void useStamina(int in)
     {
         stamina-=in;
@@ -162,7 +180,10 @@ public class PlayerSprite implements ActionListener, AnimEventListener  {
     {
          rootNode.detachChild(Model);
          Model.detachChild(textNode);
-         Material mat = new Material(assets,"Common/MatDefs/Misc/Unshaded.j3md");   
+         Material mat = new Material(assets,"Common/MatDefs/Misc/Unshaded.j3md");
+         
+         mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Back);
+         
          mat.setTexture("ColorMap", assets.loadTexture(TextureDir+theme+"/player.png"));
          Model.setMaterial(mat);
          Model.attachChild(textNode);
@@ -172,6 +193,11 @@ public class PlayerSprite implements ActionListener, AnimEventListener  {
     public Vector3f getLocation()
     {
         return Model.getLocalTranslation();
+    }
+    
+    public Vector3f getPhysicsLocation()
+    {
+        return Control.getPhysicsLocation();
     }
     
     public Vector3f getWalkDirection()

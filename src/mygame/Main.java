@@ -4,6 +4,8 @@ import com.jme3.app.SettingsDialog;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.input.ChaseCamera;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -16,6 +18,8 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.shadow.PssmShadowRenderer;
 import com.jme3.system.AppSettings;
 import de.lessvoid.nifty.Nifty;
@@ -78,22 +82,25 @@ public class Main extends SimpleApplication{
         this.getContext().getSettings().setResolution(640,480);
         this.getContext().getSettings().setFrameRate(24);   
         setDisplayStatView(false);
-        setDisplayFps(true);
+        setDisplayFps(false);
         setPauseOnLostFocus(false);
         this.getCamera().setRotation(Quaternion.IDENTITY);
-      
+        rootNode.setCullHint(CullHint.Dynamic);
         System.setSecurityManager(null); 
         flyCam.setEnabled(false); 
         chaseCam = new ChaseCamera(cam, inputManager);
-        chaseCam.setDefaultHorizontalRotation(-FastMath.DEG_TO_RAD * 90);
+        chaseCam.setDefaultHorizontalRotation(-FastMath.DEG_TO_RAD * 90);	
+
+        
         players = new Queue(PlayerData.class,7);
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 3);
         pssmRenderer.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal()); // light direction
+        pssmRenderer.setEdgesThickness(3); 
         viewPort.addProcessor(pssmRenderer); 
         rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-            
+        
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         
         startscreen = new startScreen("",this,inputManager);

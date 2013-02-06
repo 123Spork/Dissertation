@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import mygame.Data.Item;
 import mygame.Data.Map;
 import mygame.Data.PlayerData;
+import mygame.Data.ScriptedObject;
 import mygame.Data.Sprite;
 import mygame.Data.WarpPoint;
 import mygame.Main.State;
@@ -36,7 +37,7 @@ import mygame.messages.*;
        this.client = _in;
        messages=new MessageClasses();
        messages.Serialize();
-       client.addMessageListener(this, EndServerMsg.class, ByteMessage.class, LevelSetupMessage.class, AddWarpMessage.class, ToLobbyMessage.class, LobbyTimerMessage.class, AddSpriteMessage.class, RemoveSpriteMessage.class, LoggedInMessage.class, WarpToMeMessage.class, LoggedOutMessage.class, GetMapMessage.class, LoginMessage.class, MapSetupMessage.class, AddStaticItemMessage.class, RemoveStaticItemMessage.class, AddDynamicItemMessage.class, RemoveDynamicItemMessage.class, DropItemMessage.class, CreateUserMessage.class, ChatMessage.class, UpdateMessage.class, UpdateMessageNID.class);
+       client.addMessageListener(this, EndServerMsg.class, ByteMessage.class, LevelSetupMessage.class, AddScriptedObjectMessage.class, AddWarpMessage.class, ToLobbyMessage.class, LobbyTimerMessage.class, AddSpriteMessage.class, RemoveSpriteMessage.class, LoggedInMessage.class, WarpToMeMessage.class, LoggedOutMessage.class, GetMapMessage.class, LoginMessage.class, MapSetupMessage.class, AddStaticItemMessage.class, RemoveStaticItemMessage.class, AddDynamicItemMessage.class, RemoveDynamicItemMessage.class, DropItemMessage.class, CreateUserMessage.class, ChatMessage.class, UpdateMessage.class, UpdateMessageNID.class);
    }     
   public void messageReceived(Client source, Message message) {
     if (message instanceof ByteMessage) {
@@ -60,7 +61,7 @@ import mygame.messages.*;
     else if (message instanceof MapSetupMessage)
     {
         app.lobbyscreen.countdown=true;
-        app.playscreen.map = new Map(((MapSetupMessage)message).getStaticItems(),((MapSetupMessage)message).getDynamicItems(),((MapSetupMessage)message).getSprites(),((MapSetupMessage)message).getWarps());    
+        app.playscreen.map = new Map(((MapSetupMessage)message).getStaticItems(),((MapSetupMessage)message).getDynamicItems(),((MapSetupMessage)message).getSprites(),((MapSetupMessage)message).getWarps(),((MapSetupMessage)message).getScripts());    
          app.enqueue(new Callable<Void>() {
                   public Void call() throws Exception {    
               app.playscreen.map.init(app.playscreen.assetManager, app.bulletAppState, rootNode, app.playscreen.level, app.playscreen.theme);            
@@ -72,7 +73,7 @@ import mygame.messages.*;
     {
         if(app.playscreen!=null && app.playscreen.map!=null)
         {
-          app.playscreen.map.staticitems.Enqueue(new Item(((AddStaticItemMessage)message).getID(),app.getAssetManager(),"item"+((AddStaticItemMessage)message).getID(),app.playscreen.theme,((AddStaticItemMessage)message).getType(),((AddStaticItemMessage)message).getPosition()));
+          app.playscreen.map.staticitems.Enqueue(new Item(((AddStaticItemMessage)message).getID(),app.getAssetManager(),"item"+((AddStaticItemMessage)message).getID(),"item"+((AddStaticItemMessage)message).getType(),((AddStaticItemMessage)message).getType(),app.playscreen.theme,((AddStaticItemMessage)message).getPosition()));
  
            
           app.enqueue(new Callable<Void>() {
@@ -95,7 +96,7 @@ import mygame.messages.*;
     {
         if(app.playscreen!=null)
         {
-          app.playscreen.map.dynamicitems.Enqueue(new Item(((AddDynamicItemMessage)message).getID(),app.getAssetManager(),"item"+((AddDynamicItemMessage)message).getID(),app.playscreen.theme,((AddDynamicItemMessage)message).getType(),((AddDynamicItemMessage)message).getPosition())); 
+          app.playscreen.map.dynamicitems.Enqueue(new Item(((AddDynamicItemMessage)message).getID(),app.getAssetManager(),"item"+((AddDynamicItemMessage)message).getID(),"item"+((AddDynamicItemMessage)message).getType(),((AddDynamicItemMessage)message).getType(),app.playscreen.theme,((AddDynamicItemMessage)message).getPosition())); 
            app.enqueue(new Callable<Void>() {
                   public Void call() throws Exception {   
                    for(int i=0;i<app.playscreen.map.dynamicitems.size;i++)
@@ -117,7 +118,7 @@ import mygame.messages.*;
     {
         if(app.playscreen!=null)
         {
-          app.playscreen.map.sprites.Enqueue(new Sprite(((AddSpriteMessage)message).getID(),app.getAssetManager(),((AddSpriteMessage)message).getModel()+".mesh.j3o","sprite"+((AddSpriteMessage)message).getID(),1f,((AddSpriteMessage)message).getPosition(),((AddSpriteMessage)message).getModel()+".png"));
+          app.playscreen.map.sprites.Enqueue(new Sprite(((AddSpriteMessage)message).getID(),app.getAssetManager(),app.playscreen.theme+"/"+((AddSpriteMessage)message).getModel()+".mesh.j3o",((AddSpriteMessage)message).getModel(),1f,((AddSpriteMessage)message).getPosition(),((AddSpriteMessage)message).getRotation(),app.playscreen.theme+"/"+((AddSpriteMessage)message).getModel()+".png"));
 
           app.enqueue(new Callable<Void>() {
                   public Void call() throws Exception {   
@@ -140,7 +141,7 @@ import mygame.messages.*;
     {
         if(app.playscreen!=null)
         {
-          app.playscreen.map.warppoints.Enqueue(new WarpPoint(app.getAssetManager(),app.playscreen.theme,((AddWarpMessage)message).getType(),((AddWarpMessage)message).getPosition(),((AddWarpMessage)message).getGoto()));
+          app.playscreen.map.warppoints.Enqueue(new WarpPoint(app.getAssetManager(),app.playscreen.theme,((AddWarpMessage)message).getSpriteName(),((AddWarpMessage)message).getPosition(),((AddWarpMessage)message).getRotation(),((AddWarpMessage)message).getGoto()));
 
           app.enqueue(new Callable<Void>() {
                   public Void call() throws Exception {   
@@ -150,7 +151,33 @@ import mygame.messages.*;
                        if(!rootNode.hasChild(app.playscreen.map.warppoints.buffer[i].sprite.Model) && !app.playscreen.map.warppoints.buffer[i].sprite.getVisible())
                        {
                          app.playscreen.map.warppoints.buffer[i].sprite.addModel(rootNode);
-                         app.playscreen.map.warppoints.buffer[i].sprite.addPhysics(app.bulletAppState);
+                         app.playscreen.map.warppoints.buffer[i].sprite.addGhostControl(app.bulletAppState,new Vector3f(1,2,1));
+                       }
+                       }
+                   }
+                  return null;
+          }});
+         }
+     }
+     
+     
+     
+    else if(message instanceof AddScriptedObjectMessage)
+    {
+        if(app.playscreen!=null)
+        {
+          app.playscreen.map.scriptedobjects.Enqueue(new ScriptedObject(app.getAssetManager(),app.playscreen.theme,((AddScriptedObjectMessage)message).getType(),((AddScriptedObjectMessage)message).getSpriteName(),((AddScriptedObjectMessage)message).getPosition(),((AddScriptedObjectMessage)message).getRotation()));
+
+          app.enqueue(new Callable<Void>() {
+                  public Void call() throws Exception {   
+                   for(int i=0;i<app.playscreen.map.scriptedobjects.size;i++)
+                   {
+                       if(app.playscreen.map.scriptedobjects.buffer[i]!=null){
+                       if(!rootNode.hasChild(app.playscreen.map.scriptedobjects.buffer[i].sprite.Model) && !app.playscreen.map.scriptedobjects.buffer[i].sprite.getVisible())
+                       {
+                         app.playscreen.map.scriptedobjects.buffer[i].sprite.addModel(rootNode);
+                         app.playscreen.map.scriptedobjects.buffer[i].sprite.addPhysics(app.bulletAppState);  
+                         app.playscreen.map.scriptedobjects.buffer[i].sprite.addGhostControl(app.bulletAppState, new Vector3f(2,2,2));
                        }
                        }
                    }
@@ -227,11 +254,12 @@ import mygame.messages.*;
             {
                 if(app.player!=null)
                 {
-                app.updatePlayer = new PlayerData(name,b, app.playscreen.assetManager,app.playscreen.theme,new Vector3f(0,1,0));
+                app.updatePlayer = new PlayerData(name,b, app.playscreen.assetManager,app.playscreen.theme,new Vector3f(3,1,3));
                 app.enqueue(new Callable<Void>() {
                  public Void call() throws Exception { 
                     app.players.Enqueue(app.updatePlayer);
                     app.players.buffer[app.players.FindPlayer(app.updatePlayer.getName())].sprite.addModel(app.bulletAppState, rootNode);
+                    app.players.buffer[app.players.FindPlayer(app.updatePlayer.getName())].sprite.addGhostControl(app.bulletAppState);
                     if(app.updatePlayer.getID()>app.player.getID())
                     {
                         app.playscreen.updatechat(app.updatePlayer.getName()+" has joined the game!");
@@ -261,6 +289,7 @@ import mygame.messages.*;
             public Void call() throws Exception {
                  app.playscreen.initialize();
                  app.player.sprite.addModel(app.bulletAppState, rootNode);
+                 app.player.sprite.addGhostControl(app.bulletAppState);
                  app.player.sprite.Model.addControl(app.chaseCam);
                  app.chaseCam.setEnabled(true);
                     app.chaseCam.setSmoothMotion(false);
@@ -283,6 +312,9 @@ import mygame.messages.*;
        
                     app.enqueue(new Callable<Void>() {
                         public Void call() throws Exception {
+                            
+                            if(app.playscreen!=null && app.playscreen.map!=null)
+                            {
                             
                             for(int i=0;i<app.playscreen.map.dynamicitems.size;i++)
                             {
@@ -308,6 +340,28 @@ import mygame.messages.*;
                                        app.playscreen.map.sprites.buffer[i].deletePhysics(app.bulletAppState);
                                 }
                             }
+                            
+                             for(int i=0;i<app.playscreen.map.warppoints.size;i++)
+                            {
+                                if(app.playscreen.map.warppoints.buffer[i]!=null && rootNode.hasChild(app.playscreen.map.scriptedobjects.buffer[i].sprite.Model))
+                                {
+                                       app.playscreen.map.warppoints.buffer[i].sprite.removeGhostControl(app.bulletAppState);
+                                       app.playscreen.map.warppoints.buffer[i].sprite.deleteModel(rootNode);
+                                       app.playscreen.map.warppoints.buffer[i].sprite.deletePhysics(app.bulletAppState);
+                                }
+                            }
+                            
+                            for(int i=0;i<app.playscreen.map.scriptedobjects.size;i++)
+                            {
+                                if(app.playscreen.map.scriptedobjects.buffer[i]!=null && rootNode.hasChild(app.playscreen.map.scriptedobjects.buffer[i].sprite.Model))
+                                {
+                                       app.playscreen.map.scriptedobjects.buffer[i].sprite.removeGhostControl(app.bulletAppState);
+                                       app.playscreen.map.scriptedobjects.buffer[i].sprite.deleteModel(rootNode);
+                                       app.playscreen.map.scriptedobjects.buffer[i].sprite.deletePhysics(app.bulletAppState);
+                                }
+                            }
+                            
+                            
                             if(rootNode.hasChild(app.playscreen.map.skybox)){
                                 rootNode.detachChild(app.playscreen.map.skybox);
                                 app.bulletAppState.getPhysicsSpace().removeAll(app.playscreen.map.skybox);
@@ -317,6 +371,8 @@ import mygame.messages.*;
                             app.bulletAppState.getPhysicsSpace().removeAll(app.playscreen.map.terrain);
                             }
                             app.playscreen.initialize();
+                            }
+                            
                             return null;  }});
     }
     

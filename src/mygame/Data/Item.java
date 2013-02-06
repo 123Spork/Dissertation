@@ -8,24 +8,28 @@ public class Item {
     
     String name;
     public Sprite sprite;
-    int type;
     int ID;
+    
+    int type;
 
-    public Item(int _id, AssetManager assetManager, String _name, int _theme, int _type, Vector3f Location)
+    public Item(int _id, AssetManager assetManager, String _name, String spriteName, int _type, int _theme, Vector3f Location)
     {
         ID=_id;
-        type=_type;
         name=_name;
-        sprite=new Sprite(-1,assetManager, _theme+"/items/item"+_type+".mesh.j3o",""+ID, 1f, Location, _theme+"/items/item"+_type+".png" );
+        type=_type;
+        sprite=new Sprite(-1,assetManager, _theme+"/item"+type+".mesh.j3o",name,spriteName, 1f, Location,new Vector3f(0,0,0), _theme+"/item"+type+".png" );
     } 
-    public int getType()
-    {
-        return type;
-    }
     public String getName()
     {
         return name;
     }
+    
+    public int getType()
+    {
+        return type;
+    }
+    
+    
     public int getID()
     {
         return ID;

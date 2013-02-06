@@ -26,6 +26,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import java.util.concurrent.Callable;
+import mygame.Data.CollisionListener;
 import mygame.Data.Map;
 import mygame.Data.PlayerSprite;
 import mygame.Main;
@@ -53,6 +54,7 @@ public class playScreen extends AbstractAppState implements ScreenController {
     Boolean isChatting = false;
     public Boolean loaded=false;
     public BulletAppState bulletAppState;
+    CollisionListener collisions;
 
     public playScreen(Main _app, AssetManager assets, Node root, BulletAppState _bullet, InputManager input) {
         this.app = _app;
@@ -106,16 +108,12 @@ public class playScreen extends AbstractAppState implements ScreenController {
         resetchat();
         updatechat("Welcome to the game, type /help for a list of available commands.");
         isChatting=false; 
-        //   bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        collisions = new CollisionListener(app,bulletAppState);
+         app.chaseCam.setMaxVerticalRotation(1.57079633f);
+         app.chaseCam.setMinVerticalRotation((float)-Math.PI/4);
+         //  bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     }
 
-    //   for (int i = 0; i < app.Inventory.length; i++) {
-    //   ImageBuilder frame = new ImageBuilder("imageblarg"+i);
-    //   frame.filename("Textures/" + theme + "/items/" + 0 + ".png");
-    //    frame.childLayout(ChildLayoutType.Overlay);
-    //    frame.x(""+((1024-32)-(50*(i+1))));
-    //    frame.build(nifty, screen, nifty.getCurrentScreen().findElementByName("panel2"));
-    //   }
     public void Chat() {
         if (!isChatting) {
             nifty.setIgnoreKeyboardEvents(false);
@@ -146,7 +144,7 @@ public class playScreen extends AbstractAppState implements ScreenController {
                             updatechat(playerName + " is not online.");
                         }
                     } else if (Blarg.startsWith("/respawn")) {
-                        app.player.sprite.setLocation(new Vector3f(0, 1, 0));
+                        app.player.sprite.setLocation(new Vector3f(2, 6, 3));
                         app.player.sprite.updateScene = true;
                     } else if (Blarg.startsWith("/help")) {
                         updatechat("/warptoplayer <playername>, /warptome <playername>, /respawn");
@@ -456,7 +454,10 @@ public class playScreen extends AbstractAppState implements ScreenController {
     public void setscifi() {
         this.theme = 2;
         app.player.sprite.resetTheme(theme, assetManager, rootNode);
-        map.ChangeTheme(theme, level, rootNode, assetManager);
+        float gravity = app.player.sprite.Control.getGravity();
+        app.player.sprite.Control.setGravity(0);
+        map.ChangeTheme(app, theme, level, rootNode, app.bulletAppState, assetManager);
+         app.player.sprite.Control.setGravity(gravity);
         if (app.players != null) {
             for (int i = 0; i < app.players.size; i++) {
                 if (app.players.buffer[i] != null) {
@@ -474,7 +475,10 @@ public class playScreen extends AbstractAppState implements ScreenController {
     public void setfilmnoir() {
         this.theme = 1;
         app.player.sprite.resetTheme(theme, assetManager, rootNode);
-        map.ChangeTheme(theme, level, rootNode, assetManager);
+        float gravity = app.player.sprite.Control.getGravity();
+        app.player.sprite.Control.setGravity(0);
+        map.ChangeTheme(app, theme, level, rootNode, app.bulletAppState, assetManager);
+         app.player.sprite.Control.setGravity(gravity);
         if (app.players != null) {
             for (int i = 0; i < app.players.size; i++) {
                 if (app.players.buffer[i] != null) {
@@ -486,13 +490,16 @@ public class playScreen extends AbstractAppState implements ScreenController {
             NiftyImage img = nifty.getRenderEngine().createImage("Textures/" + theme + "/items/" + app.Inventory[i - 1] + ".png", false);
             Element niftyElement = nifty.getCurrentScreen().findElementByName("item" + i);
             niftyElement.getRenderer(ImageRenderer.class).setImage(img);
-        }
+        }  
     }
 
     public void setwestern() {
         this.theme = 0;
         app.player.sprite.resetTheme(theme, assetManager, rootNode);
-        map.ChangeTheme(theme, level, rootNode, assetManager);
+        float gravity = app.player.sprite.Control.getGravity();
+        app.player.sprite.Control.setGravity(0);
+        map.ChangeTheme(app, theme, level, rootNode, app.bulletAppState, assetManager);
+         app.player.sprite.Control.setGravity(gravity);
         if (app.players != null) {
             for (int i = 0; i < app.players.size; i++) {
                 if (app.players.buffer[i] != null) {
@@ -526,6 +533,7 @@ public class playScreen extends AbstractAppState implements ScreenController {
              }  
             nifty.getCurrentScreen().findElementByName("load").hide();
             nifty.setIgnoreMouseEvents(false);
+            app.player.sprite.resetTheme(theme, assetManager, rootNode);
             loaded=true;
         }
         
@@ -553,27 +561,7 @@ public class playScreen extends AbstractAppState implements ScreenController {
                     app.players.buffer[i].sprite.Update(tpf);
                 }
             }
-        }
-        
-        for(int i=0;i<map.warppoints.size;i++)
-        {
-            if(map.warppoints.buffer[i]!=null)
-            {
-            Vector3f magnitude= new Vector3f(0,0,0);
-            double distance;
-            
-            magnitude.x = app.player.sprite.getLocation().x>map.warppoints.buffer[i].sprite.Model.getLocalTranslation().x ? app.player.sprite.getLocation().x- map.warppoints.buffer[i].sprite.Model.getLocalTranslation().x : map.warppoints.buffer[i].sprite.Model.getLocalTranslation().x-app.player.sprite.getLocation().x;
-            magnitude.y = app.player.sprite.getLocation().y>map.warppoints.buffer[i].sprite.Model.getLocalTranslation().y ? app.player.sprite.getLocation().y- map.warppoints.buffer[i].sprite.Model.getLocalTranslation().y : map.warppoints.buffer[i].sprite.Model.getLocalTranslation().y-app.player.sprite.getLocation().y;
-            magnitude.y = app.player.sprite.getLocation().y>map.warppoints.buffer[i].sprite.Model.getLocalTranslation().z ? app.player.sprite.getLocation().z- map.warppoints.buffer[i].sprite.Model.getLocalTranslation().z : map.warppoints.buffer[i].sprite.Model.getLocalTranslation().z-app.player.sprite.getLocation().z;
-            distance = Math.sqrt((magnitude.z*magnitude.z)+(magnitude.y*magnitude.y)+(magnitude.z*magnitude.z));
-            if(distance<=0.5)
-                {
-                    app.player.sprite.setLocation(map.warppoints.buffer[i].getGoto());
-                    app.client.send(new UpdateMessageNID(app.player.sprite.getLocation(), app.player.sprite.getWalkDirection()));    
-                 }
-            }
-        }
-           
+        } 
        }
     }
     

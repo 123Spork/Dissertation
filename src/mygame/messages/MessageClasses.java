@@ -26,6 +26,7 @@ public class MessageClasses {
         Serializer.registerClass(EndServerMsg.class);   
         Serializer.registerClass(AddSpriteMessage.class); 
         Serializer.registerClass(AddWarpMessage.class);
+        Serializer.registerClass(AddScriptedObjectMessage.class);
         Serializer.registerClass(RemoveSpriteMessage.class);  
         Serializer.registerClass(LobbyTimerMessage.class);
         Serializer.registerClass(ToLobbyMessage.class);

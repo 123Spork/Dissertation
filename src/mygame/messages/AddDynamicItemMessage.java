@@ -10,7 +10,7 @@ public class AddDynamicItemMessage extends AbstractMessage {
   private int ID,Type;
   private Vector3f position;
   public AddDynamicItemMessage() {}    // empty constructor
-  public AddDynamicItemMessage(int _id, int _type, Vector3f _pos){ID=_id; Type=_type; position=_pos;}
+  public AddDynamicItemMessage(int _id, int _type,Vector3f _pos){ID=_id; Type=_type; position=_pos;}
   
   public int getID()
   {
@@ -24,6 +24,5 @@ public class AddDynamicItemMessage extends AbstractMessage {
   {
       return position;
   }
- 
   
   }

@@ -9,9 +9,9 @@ import com.jme3.network.serializing.Serializable;
 public class AddSpriteMessage extends AbstractMessage {
   private int ID;
   private String model;
-  private Vector3f position;
+  private Vector3f position, rotation;
   public AddSpriteMessage() {}    // empty constructor
-  public AddSpriteMessage(int _id,Vector3f _pos,String _model){ID=_id; model=_model; position=_pos;}
+  public AddSpriteMessage(int _id,Vector3f _pos, Vector3f _rot, String _model){rotation=_rot; ID=_id; model=_model; position=_pos;}
   
   public int getID()
   {
@@ -24,6 +24,10 @@ public class AddSpriteMessage extends AbstractMessage {
   public Vector3f getPosition()
   {
       return position;
+  }
+  public Vector3f getRotation()
+  {
+      return rotation;
   }
  
   
